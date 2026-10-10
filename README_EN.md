@@ -1,49 +1,16 @@
 # AppBridge
 
-> Let an AI agent read and operate a real iPhone over USB — reading in-app content that has **no public API and can't be scraped from the web** without triggering platform risk controls.
+*[中文版](README.md)*
 
-AppBridge is a **social-media / in-app information-collection toolkit**. Built on [WebDriverAgent](https://github.com/appium/WebDriverAgent) (Apple's official XCTest automation framework), it exposes an iPhone's UI structure and interactions to any MCP-compatible AI client (Codex, Kimi Code, Claude Desktop, Cursor…) through a local [MCP](https://modelcontextprotocol.io) server — plus ready-to-use collection scripts for common scenarios.
+---
 
-*[中文版 README](README.md)*
+AppBridge is an **in-app information-collection toolkit**. Built on [WebDriverAgent](https://github.com/appium/WebDriverAgent) (Apple's official XCTest automation framework), it exposes an iPhone's UI structure and interactions to any MCP-compatible AI client (Codex, Kimi Code, Claude Desktop, Cursor…) through a local [MCP](https://modelcontextprotocol.io) server — plus ready-to-use collection scripts for common scenarios.
+
+## How it works
 
 ![AppBridge architecture](docs/architecture.png)
 
 *[Interactive architecture diagram (zoomable / exportable)](docs/architecture.html)*
-
-## Why AppBridge
-
-In China, valuable information lives inside apps. Xiaohongshu (RED), WeChat official accounts, Douyin, Weibo, Bilibili, Zhihu… most of it **has no public API, and scraping it from the web easily triggers platform risk controls or CAPTCHAs.**
-
-AppBridge takes a different path: **let the AI browse inside the real app, just like a human.** Under the hood it uses Apple's official XCTest automation channel (the de-facto standard for mobile testing), so platforms see nothing more than an ordinary user scrolling — **compliant, and far less likely to be flagged.**
-
-### Core value
-
-- **Access "app-only" information** — content with no API that web scraping can't reliably reach
-- **Read the accessibility tree directly** — mainstream apps expose a rich accessibility tree, enabling **structured extraction** that's faster, more accurate, and free of model cost compared to screenshot OCR
-- **Real login state** — uses the apps already signed in on your phone; no passwords or verification codes to handle
-- **Cross AI client** — based on the open MCP protocol; one server shared by many AI clients
-- **Data stays local** — USB connection only; screens and data never leave your machine
-
-## How it works
-
-```
-┌──────────────────────────────────────────────┐
-│  AI agent (Codex / Kimi Code)                 │
-│  natural-language task → structured results   │
-├──────────────────────────────────────────────┤
-│  ① MCP protocol layer (stdio)                │
-│     open standard between AI and local server │
-├──────────────────────────────────────────────┤
-│  ② Local MCP server (iPhone-use)             │
-│     pure-Python, no deps; AI calls → HTTP     │
-├──────────────────────────────────────────────┤
-│  ③ WebDriverAgent (WDA, by Appium)           │
-│     open-source HTTP server on the iPhone     │
-├──────────────────────────────────────────────┤
-│  ④ iOS (XCTest / Accessibility)              │
-│     reads the tree, taps, types, screenshots  │
-└──────────────────────────────────────────────┘
-```
 
 **Two extraction modes** (tree-first, per app):
 
@@ -63,7 +30,6 @@ AppBridge takes a different path: **let the AI browse inside the real app, just 
 | Jihuanshe | 43 | ✅ rich | content consumption — safe to collect |
 | WeChat | 43 | ✅ rich | content consumption — safe to collect |
 | Xiaohongshu | 38 | ✅ rich | content consumption — safe to collect |
-| Taobao | 18 | ✅ present | ⚠️ **read-only, never touch transactions** (observed risk-control logout) |
 
 See [docs/app-tiers.md](docs/app-tiers.md) for the app tiering and risk-control notes.
 
@@ -89,7 +55,7 @@ Follow the prompts to complete Xcode signing, WDA build, device trust and Develo
 - **Codex**: see [docs/codex.md](docs/codex.md)
 - **Kimi Code**: see [docs/kimi-code.md](docs/kimi-code.md) — register the `iphone_use` server in `~/.kimi-code/mcp.json`, zero code changes
 
-### 3. Run a scenario
+### 3. Try a scenario
 
 Example — find high-engagement "GitHub open-source project" notes on Xiaohongshu:
 

@@ -1,26 +1,9 @@
 # AppBridge
 
-> 让 AI agent 通过 USB 直连真实 iPhone，在真实 App 里像人一样浏览和操作，读取那些"只存在于 App 内、不开放 API"的信息。
-
-*[English README](README_EN.md)*
+*[English](README_EN.md)*
 
 ---
-
-AppBridge 是一套**社媒/App 信息采集方案**：以 [WebDriverAgent](https://github.com/appium/WebDriverAgent)（苹果官方 XCTest 自动化测试框架）为底座，通过 [MCP](https://modelcontextprotocol.io) 协议把 iPhone 的界面结构和操作能力暴露给 AI agent（Codex / Kimi Code / Claude Desktop / Cursor 等），并提供可直接复用的场景化采集脚本。
-
-## 为什么是 AppBridge
-
-国内重度依赖 App。小红书、微信公众号、抖音、微博、B站、知乎……大量有价值的信息分散在各家 App 里，**不开放 API、网页抓取容易触发风控、模拟网页操作会被平台安全机制拦截**。
-
-AppBridge 换了一条路：**让 AI 在真实 App 里像人一样浏览**。底层用的是苹果官方的 XCTest 自动化通道（移动测试事实标准），平台看到的就是正常用户刷 App，因此**合规且不易被风控**。
-
-### 核心价值
-
-- **拿到"App-only"信息**：不开放 API、网页抓取易被封的内容
-- **控件树直读**：主流 App 都有完整的无障碍控件树，直接做**结构化提取**——比截图 OCR 更快、更准、零模型成本
-- **真实登录态**：用你手机上已登录的 App，无需处理账号密码/验证码
-- **跨 AI 客户端**：基于 MCP 开放协议，一套服务，多个 AI 客户端共用
-- **数据不出本机**：USB 直连，画面和数据留在本地
+AppBridge 是一套**App 信息采集方案**：以 [WebDriverAgent](https://github.com/appium/WebDriverAgent)（苹果官方 XCTest 自动化测试框架）为底座，通过 [MCP](https://modelcontextprotocol.io) 协议把 iPhone 的界面结构和操作能力暴露给 AI agent（Codex / Kimi Code / Claude Desktop / Cursor 等），并提供可直接复用的场景化采集脚本。
 
 ## 工作原理
 
@@ -46,7 +29,6 @@ AppBridge 换了一条路：**让 AI 在真实 App 里像人一样浏览**。底
 | 集换社 | 43 | ✅ 丰富 | 内容消费，放心采集 |
 | 微信 | 43 | ✅ 丰富 | 内容消费，放心采集 |
 | 小红书 | 38 | ✅ 丰富 | 内容消费，放心采集 |
-| 淘宝 | 18 | ✅ 有 | ⚠️ **只读，不碰交易**（实测会触发风控登出） |
 
 详见 [docs/app-tiers.md](docs/app-tiers.md) 的 App 适配分级与风控说明。
 
@@ -72,7 +54,7 @@ cd iPhone-use && sh scripts/install.sh
 - **Codex**：见 [docs/codex.md](docs/codex.md)
 - **Kimi Code**：见 [docs/kimi-code.md](docs/kimi-code.md)（编辑 `~/.kimi-code/mcp.json` 注册 `iphone_use` server 即可，零改动）
 
-### 3. 跑一个场景
+### 3. 测试一个使用场景
 
 以"小红书找高互动的 GitHub 开源项目笔记"为例：
 
