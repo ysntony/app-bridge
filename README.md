@@ -2,6 +2,13 @@
 
 > 让 AI agent 通过 USB 直连真实 iPhone，在真实 App 里像人一样浏览和操作，读取那些"只存在于 App 内、不开放 API"的信息。
 
+---
+
+**English** · AppBridge lets an AI agent read and operate a real iPhone over USB — reading in-app content (Xiaohongshu, WeChat, Douyin, Weibo, Bilibili, Zhihu…) that has **no public API and can't be scraped from the web** without triggering platform risk controls. It runs on **WebDriverAgent** (Apple's official XCTest automation channel) and exposes the device to any MCP-compatible client (Codex, Kimi Code, Claude Desktop, Cursor) through a local MCP server. Mainstream apps expose a rich **accessibility tree**, so extraction is **structured, fast and free** — far better than screenshot OCR. Compliant, no jailbreak, no private protocol; data stays on your machine. *Chinese below / 中文见下。*
+
+---
+
+
 AppBridge 是一套**社媒/App 信息采集方案**：以 [WebDriverAgent](https://github.com/appium/WebDriverAgent)（苹果官方 XCTest 自动化测试框架）为底座，通过 [MCP](https://modelcontextprotocol.io) 协议把 iPhone 的界面结构和操作能力暴露给 AI agent（Codex / Kimi Code / Claude Desktop / Cursor 等），并提供可直接复用的场景化采集脚本。
 
 ## 为什么是 AppBridge
