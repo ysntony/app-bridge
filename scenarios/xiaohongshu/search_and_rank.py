@@ -33,16 +33,12 @@ def wda_session():
 SID = wda_session()
 
 def launch(bundle_id):
+    # WDA 的 apps/activate 必须挂在 session 路径下，无 session 前缀会 404
     if SID:
         try:
-            http(f"/session/{SID}/url", "POST", {"url": f"{bundle_id}:"})
+            http(f"/session/{SID}/wda/apps/activate", "POST", {"bundleId": bundle_id})
         except Exception:
             pass
-    # 兜底：activate app
-    try:
-        http(f"/wda/apps/activate", "POST", {"bundleId": bundle_id})
-    except Exception:
-        pass
 
 def tap(x, y):
     if SID:
@@ -82,16 +78,23 @@ def type_text(text):
 def tree_nodes():
     """返回当前前台 App 的 (label, type, frame) 节点列表。"""
     raw = urllib.request.urlopen(WDA + "/source?format=json", timeout=15).read().decode("utf-8", "ignore")
+    data = json.loads(raw)
+    root = data.get("value", data)
     nodes = []
-    for m in re.finditer(r'\{[^{}]*"type"\s*:\s*"(\w+)"[^{}]*"label"\s*:\s*"((?:[^"\\]|\\.)*)"[^{}]*"frame"\s*:\s*\{\{(\d+),\s*(\d+)\},\s*\{(\d+),\s*(\d+)\}\}[^{}]*\}', raw):
-        t, label, x, y, w, h = m.group(1), m.group(2), *map(int, m.groups()[2:])
-        nodes.append({"type": t, "label": label, "x": x, "y": y, "w": w, "h": h})
-    # 更宽松的兜底：只抓 type+label
-    if not nodes:
-        for m in re.finditer(r'"type"\s*:\s*"(\w+)"[^{}]*?"label"\s*:\s*"((?:[^"\\]|\\.)*)"', raw):
-            label = m.group(2).strip()
-            if label:
-                nodes.append({"type": m.group(1), "label": label})
+    frame_re = re.compile(r"\{\{(-?[\d.]+),\s*(-?[\d.]+)\},\s*\{(-?[\d.]+),\s*(-?[\d.]+)\}\}")
+    def walk(node):
+        if not isinstance(node, dict):
+            return
+        label, t = node.get("label"), node.get("type")
+        if label and t:
+            n = {"type": t, "label": label}
+            m = frame_re.match(node.get("frame") or "")
+            if m:
+                n.update(dict(zip(("x", "y", "w", "h"), (int(float(v)) for v in m.groups()))))
+            nodes.append(n)
+        for c in node.get("children") or []:
+            walk(c)
+    walk(root)
     return nodes
 
 def parse_posts(nodes):
@@ -103,6 +106,9 @@ def parse_posts(nodes):
         if re.fullmatch(r"\d{1,7}", t or ""):
             likes = int(t)
             author = texts[i-1] if i >= 1 else ""
+            # 点赞数常以 Button+StaticText 重复出现，前一个是数字则说明已处理过
+            if re.fullmatch(r"\d+", author or ""):
+                continue
             # 往前找最近的标题（作者之前的非数字、非栏目文本）
             title = ""
             for j in range(i-2, max(-1, i-6), -1):
